@@ -5,9 +5,7 @@ void main() {
 
 	int taille;
 	int nb_mots = 0;
-	int n = 0;
 	float moyenne_longueur = 0;
-	int compteur = 0;
 	char phrase[1024];
 	int j = 0;
 	printf("Entrer une phrase\n");
