@@ -143,10 +143,13 @@ void affichage_enreg_frmt(Enregistrement enr)
 bool est_sup(Enregistrement enr1, Enregistrement enr2)
 {
 	// code à compléter ici
+	int tmp1 = (char)toupper(enr1.nom[0]); //on met la vleur de la lettre en majuscule pour que l'ordre alphabétique ne soit pas influencé par la
+	int tmp2 = (char)toupper(enr2.nom[0]);//casse minuscule-majuscule
 
-
-	return(false);
-
+	if (tmp1 < tmp2) {
+		return(false);
+	}
+	return(true);
 }
 
 /*********************************************************************/
@@ -158,8 +161,17 @@ void trier(Repertoire* rep)
 
 #ifdef IMPL_TAB
 	// ajouter code ici pour tableau
+	Enregistrement tmp;
 
-
+	for (int j = 0; j <= rep->nb_elts - 2; j++) {
+		for (int i = 0; i <= rep->nb_elts - 2; i++) {
+			if (est_sup(rep->tab[i], rep->tab[i + 1]) == true) {
+				tmp = rep->tab[i + 1];
+				rep->tab[i + 1] = rep->tab[i];
+				rep->tab[i] = tmp;
+			}
+		}
+	}
 
 
 #else
@@ -192,10 +204,34 @@ int rechercher_nom(Repertoire* rep, char nom[], int ind)
 							/* tableau, afin de les convertir en majuscules et les comparer */
 	bool trouve = false;
 
+	ind_fin = rep->nb_elts - 1; // indice de fin à ne pas dépasser
+	strncpy_s(tmp_nom, _countof(tmp_nom), nom, _TRUNCATE); //copie du nom à rechercher
+	int j = 0;
+
+	while (tmp_nom[j] != '\0') {
+		tmp_nom[j] = (char)toupper(tmp_nom[j]);
+		j++;
+	}
+
 
 #ifdef IMPL_TAB
 	// ajouter code ici pour tableau
+	while ((i <= ind_fin) && (!trouve))
+	{
+		strncpy_s(tmp_nom2, _countof(tmp_nom2), rep->tab[i].nom, _TRUNCATE);//copie de la chaîne lue
+		j = 0;
+		while (tmp_nom2[j] != '\0') {
+			tmp_nom2[j] = (char)toupper(tmp_nom2[j]);
+			j++;
+		}
 
+		if (strcmp(tmp_nom, tmp_nom2) == 0) {
+			trouve = true;
+		}
+		else {
+			i++;
+		}
+	}
 #else
 #ifdef IMPL_LIST
 	// ajouter code ici pour Liste
