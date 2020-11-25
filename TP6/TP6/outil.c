@@ -248,7 +248,17 @@ int rechercher_nom(Repertoire* rep, char nom[], int ind)
 void compact(char* s)
 {
 	// compléter code ici
+	int j = 0;
 
+	while (s[j] != '\0') {
+		if (s[j] == '-' | s[j] == ' ') {
+			for (int i = j; i < strlen(s); i++) {
+				s[i] = s[i + 1];
+			}
+			j--;
+		}
+		j++;
+	}
 	return;
 }
 
