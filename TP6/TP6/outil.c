@@ -34,7 +34,7 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 	else {
 		return(ERROR);
 	}
-
+	modif = true;
 
 #else
 #ifdef IMPL_LIST
@@ -253,9 +253,9 @@ void compact(char* s)
 	while (s[j] != '\0') {
 		if (s[j] == '-' | s[j] == ' ') {
 			for (int i = j; i < strlen(s); i++) {
-				s[i] = s[i + 1];
+				s[i] = s[i + 1];//on décale tout le numéro vers la gauche
 			}
-			j--;
+			j--;//cela permet de s'occuper du cas éventuel où la personne metterait deux espaces ou tirés à la suite de revenir sur le même rang
 		}
 		j++;
 	}
@@ -272,7 +272,21 @@ int sauvegarder(Repertoire* rep, char nom_fichier[])
 	FILE* fic_rep;					/* le fichier */
 #ifdef IMPL_TAB
 	// ajouter code ici pour tableau
+	errno_t err = fopen_s(&fic_rep, nom_fichier, "w");
 
+	if (err == 0 && fic_rep != NULL) {
+
+		char* buffer[sizeof(Enregistrement) + 1];
+		
+		for (int idx = 0; idx < rep->nb_elts; idx++) {
+			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s, %s, %s\n", rep->tab[idx].nom, rep->tab[idx].prenom, rep->tab[idx].tel);
+			fputs(buffer, fic_rep);
+		}
+	}
+	else {
+		return ERROR;
+	}
+	fclose(fic_rep);
 #else
 #ifdef IMPL_LIST
 	// ajouter code ici pour Liste
