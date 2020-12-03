@@ -79,24 +79,28 @@ int InsertElementAt(LinkedList* Liste, int i, Enregistrement pers) {
 		if (Liste->size == 0) { // insertion en tête de l'unique élément
 			NewElement = NewLinkedListElement(pers);
 			if (NewElement != NULL) {
+				//Quand il n'y a aucun élément on ajoute l'élément en tête et en queue, mais la taille est de un, la tête et la queue sont le même maillon
 				Liste->head = NewElement;
 				Liste->tail = NewElement;
+				Liste->size++;
 			}
 			else {
 				return(0);
 			}
 		}
 		if (Liste->size <= i) { // insertion en queue
+			//Si l'indice est plus grand que la taille de la liste on ajoute l'élément en queue en faisant attention à ce que l'élément précédemment en queue
+			//pointe bien vers l'élément rajouté pour son élément suivant
 			NewElement = NewLinkedListElement(pers);
 			if (NewElement != NULL) {
 				Liste->tail->next = NewElement;
 				Liste->tail = NewElement;
+				Liste->size++;
 			}
 			else {
 				return(0);
 			}
 		}
-		Liste->size++;
 		return(1);
 	}
 	return(0);
