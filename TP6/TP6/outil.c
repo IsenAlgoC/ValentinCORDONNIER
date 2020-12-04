@@ -293,11 +293,11 @@ int rechercher_nom(Repertoire* rep, char nom[], int ind)
 void compact(char* s)
 {
 	// compléter code ici
-	int j = 0;
+	unsigned int j = 0;
 
 	while (s[j] != '\0') {
-		if (s[j] == '-' | s[j] == ' ') {
-			for (int i = j; i < strlen(s); i++) {
+		if (s[j] == '-' || s[j] == ' ') {
+			for ( unsigned int i = j; i < strlen(s); i++) {
 				s[i] = s[i + 1];//on décale tous les caractères vers la gauche à chaque fois qu'on trouve un élément non désiré
 			}
 			j--;//cela permet de s'occuper du cas éventuel où la personne metterait deux espaces ou tirés à la suite de revenir sur le même rang
@@ -343,12 +343,12 @@ int sauvegarder(Repertoire* rep, char nom_fichier[])
 	int i = 0;
 	if (err == 0 && fic_rep != NULL) {
 		SingleLinkedListElem* currentElement = rep->liste->head;
-		char* buffer[sizeof(Enregistrement) + 1];
+		char buffer[sizeof(Enregistrement) + 1];
 
 
 		for (idx = 0; idx < rep->nb_elts; idx++) {
 			//On copie d'abord ce que l'on veut dans le buffer
-			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s\n", currentElement->pers.nom, currentElement->pers.prenom,
+			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s", currentElement->pers.nom, currentElement->pers.prenom,
 				currentElement->pers.tel);
 			//Et ensuite on l'écrit dans le fichier
 			fputs(buffer, fic_rep);
@@ -382,9 +382,6 @@ int charger(Repertoire* rep, char nom_fichier[])
 	int idx = 0;
 
 	char* char_nw_line;
-	//
-	SingleLinkedListElem* currentElement = rep->liste->head;
-	//
 	_set_errno(0);
 	if (((err = fopen_s(&fic_rep, nom_fichier, "r")) != 0) || (fic_rep == NULL))
 	{
@@ -418,15 +415,17 @@ int charger(Repertoire* rep, char nom_fichier[])
 #ifdef IMPL_LIST
 														// ajouter code implemention liste
 				
-				if (lire_champ_suivant(buffer, &idx, currentElement->pers.nom, MAX_NOM, SEPARATEUR) == OK)
+				SingleLinkedListElem currentElement;
+				if (lire_champ_suivant(buffer, &idx, currentElement.pers.nom, MAX_NOM, SEPARATEUR) == OK)
 				{
 					idx++;							/* on saute le separateur */
-					if (lire_champ_suivant(buffer, &idx, currentElement->pers.prenom, MAX_NOM, SEPARATEUR) == OK)
+					if (lire_champ_suivant(buffer, &idx, currentElement.pers.prenom, MAX_NOM, SEPARATEUR) == OK)
 					{
 						idx++;
-						if (lire_champ_suivant(buffer, &idx, currentElement->pers.tel, MAX_TEL, SEPARATEUR) == OK) {
+						if (lire_champ_suivant(buffer, &idx, currentElement.pers.tel, MAX_TEL, SEPARATEUR) == OK) {
+							InsertElementAt(rep->liste, num_rec, currentElement.pers);
 							num_rec++;		/* element à priori correct, on le comptabilise */
-							currentElement = currentElement->next;
+							
 						}
 					}
 				}
