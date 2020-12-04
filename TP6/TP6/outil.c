@@ -37,10 +37,10 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 		return(ERROR);
 	}
 	modif = true;
+	rep->est_trie = false;
 
 #else
 #ifdef IMPL_LIST
-	bool inserted = false;
 	//S'il n'y a pas d'élément on en met un et la liste est forcément triée
 	if (rep->nb_elts == 0) {
 		if (InsertElementAt(rep->liste, rep->liste->size, enr) != 0) {
@@ -51,8 +51,11 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 		}
 
 	}
-	else {//Sinon on en rajoute un en faisant attention au tri car avec les listes chaînées on peutt facilement intervertir deux maillons donc en profite 
-		  //pour ne pas devoir créer une fonction de tri
+	else {
+		int idx = 0;
+		SingleLinkedListElem* currentElement = GetElementAt(rep->liste, idx);
+		//Sinon on en rajoute un en faisant attention au tri car avec les listes chaînées on peut facilement intervertir deux maillons 
+		//donc on en profite pour ne pas devoir créer une fonction de tri
 		if (rep->nb_elts < MAX_ENREG) {
 			//si la valeur est supérieure à celle contenue dans la queue on remplace la queue par la nouvelle valeur et la liste est triée
 			if (est_sup(enr, rep->liste->tail->pers) == true) {
@@ -62,14 +65,17 @@ int ajouter_un_contact_dans_rep(Repertoire* rep, Enregistrement enr)
 					rep->est_trie = true;
 				}
 			}
-			//Sinon on interverti en mettant le nouvel élément juste avant la queue et en gardant la queue telle quelle, on assure ainsi le tri de la liste
+			//Sinon on cherche le premier élément qui lui est supérieur et on insère notre élément juste avant celui-ci
 			else {
-				if (InsertElementAt(rep->liste, rep->liste->size - 1, enr) != 0) {
+				while (est_sup(enr, currentElement->pers)==true) {
+					idx++;
+					currentElement = GetElementAt(rep->liste, idx);
+				}
+				if (InsertElementAt(rep->liste, idx, enr) != 0) {
 					rep->nb_elts++;
 					modif = true;
 					rep->est_trie = true;
 				}
-
 			}
 		}
 		else {
@@ -163,14 +169,24 @@ void affichage_enreg_frmt(Enregistrement enr)
   /**********************************************************************/
 bool est_sup(Enregistrement enr1, Enregistrement enr2)
 {
-	// code à compléter ici
-	int tmp1 = (char)toupper(enr1.nom[0]); //on met la valeur de la lettre en majuscule pour que l'ordre alphabétique ne soit pas influencé par la
-	int tmp2 = (char)toupper(enr2.nom[0]);//casse minuscule-majuscule
-	//Ensuite on compare juste si la valeur une est plus grande que la deux ou non
-	if (tmp1 < tmp2) {
-		return(false);
+	//code à compléter ici
+	int i = 0;
+	/*Avec cette boucle on test si chaque lettre de chaque mot a une valeur en ascii plus grande que celle de l'autre mot
+	au même emplacement, à partir du moment où on en trouve une plus grande que l'autre alors on peut définir l'ordre, de plus si un mot est 
+	plus petit qu'un autre il sera décrit comme plus petit car " " ou "0" sont plus petits que les lettres en majuscule dans la table ascii*/
+	while (i < MAX_NOM) {
+		int tmp1 = (char)toupper(enr1.nom[i]);//on met la valeur de la lettre en majuscule pour que l'ordre alphabétique ne soit pas influencé par 
+		int tmp2 = (char)toupper(enr2.nom[i]);//la casse minuscule-majuscule
+
+		if (tmp1 > tmp2) {
+			return (true);
+		}
+		else if (tmp2 > tmp1){
+			return false;
+		}
+		i++;
 	}
-	return(true);
+	return(false);
 }
 
 /*********************************************************************/
@@ -183,10 +199,10 @@ void trier(Repertoire* rep)
 #ifdef IMPL_TAB
 	// ajouter code ici pour tableau
 	Enregistrement tmp;
-	//pour trier un tableau on a besoin de deux indices, car quand on trouve un plus grand on s'assure qu'il est le plus grand de tout le tableau
-	//sinon on prend celui qui est trouvé comme plus grand et on recommence, on décale au bout du tableau chaque plus grand que l'on trouve
+	//Pour un tableau on a besoin de deux indices pour utiliser la technique du tri à bulle, qui consiste à trouver le plus grand du tableau,
+	//à le mettre à la fin et de trouver ensuite les nième plus grand jusqu'à ce que le tableau entier soit ordonné dans l'ordre croissant
 	for (int j = 0; j <= rep->nb_elts - 2; j++) {
-		for (int i = 0; i <= rep->nb_elts - 2; i++) {
+		for (int i = 0; i <= rep->nb_elts - j - 2; i++) {
 			if (est_sup(rep->tab[i], rep->tab[i + 1]) == true) {
 				tmp = rep->tab[i + 1];
 				rep->tab[i + 1] = rep->tab[i];
@@ -194,7 +210,6 @@ void trier(Repertoire* rep)
 			}
 		}
 	}
-
 
 #else
 #ifdef IMPL_LIST
@@ -326,7 +341,7 @@ int sauvegarder(Repertoire* rep, char nom_fichier[])
 		
 		for (int idx = 0; idx < rep->nb_elts; idx++) {
 			//On copie d'abord ce que l'on veut dans le buffer
-			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s", rep->tab[idx].nom, rep->tab[idx].prenom, rep->tab[idx].tel);
+			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s\n", rep->tab[idx].nom, rep->tab[idx].prenom, rep->tab[idx].tel);
 			//Et ensuite on l'écrit dans le fichier
 			fputs(buffer, fic_rep);
 		}
@@ -348,7 +363,7 @@ int sauvegarder(Repertoire* rep, char nom_fichier[])
 
 		for (idx = 0; idx < rep->nb_elts; idx++) {
 			//On copie d'abord ce que l'on veut dans le buffer
-			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s", currentElement->pers.nom, currentElement->pers.prenom,
+			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s\n", currentElement->pers.nom, currentElement->pers.prenom,
 				currentElement->pers.tel);
 			//Et ensuite on l'écrit dans le fichier
 			fputs(buffer, fic_rep);
