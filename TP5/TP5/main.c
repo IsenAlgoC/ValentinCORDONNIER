@@ -43,14 +43,14 @@ void main() {
 		printf("mémoire insuffisante");
 	}
 
-	int* Size = 30;
-	int* NbElts = 30;
+	int Size = 30;
+	int NbElts = 30;
 
 	ajoutElementDansTableau(myTab3, &Size, &NbElts, 4);
-	afficheTab(myTab3, &Size, 31); //on regarde si la fonction a bien rajouté un "4" à la suite soit à la 30ème place (en commençant à 0) ce qui est le cas
+	afficheTab(myTab3, Size, 31); //on regarde si la fonction a bien rajouté un "4" à la suite soit à la 30ème place (en commençant à 0) ce qui est le cas
 
 	ajoutElementDansTableau(myTab3, &Size, &NbElts, 4);
-	afficheTab(myTab3, &Size, 32); //on regarde si la fonction a bien rajouté un "4" à la suite soit à la 31ème place (en commençant à 0) ce qui est le cas
+	afficheTab(myTab3, Size, 32); //on regarde si la fonction a bien rajouté un "4" à la suite soit à la 31ème place (en commençant à 0) ce qui est le cas
 	//le programme prend donc en compte l'augmentation de la taile et du nombre d'éléments comme souhaité en mettant des pointeurs comme arguments
 
 	printf("\n\n");

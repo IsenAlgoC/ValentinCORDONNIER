@@ -68,19 +68,21 @@ int displayElements(TABLEAU* tab, int startPos, int endPos) {
 	if (tab->elt == NULL || tab->size < 0 || startPos < 1 || endPos < 1) {
 		return -1;
 	}
-	if (startPos <= endPos) {
-		for (int i = startPos - 1; i < endPos ; i++) { //Pour pouvoir afficher directement les valeurs réellement voulues, on soustrait 1
-			//car le tableau commence au rang 0 et non 1
-			printf("%d ", tab->elt[i]);
+	else {
+		if (startPos <= endPos) {
+			for (int i = startPos - 1; i < endPos; i++) { //Pour pouvoir afficher directement les valeurs réellement voulues, on soustrait 1
+				//car le tableau commence au rang 0 et non 1
+				printf("%d ", tab->elt[i]);
+			}
+			return 0;
 		}
-		return 0;
-	}
-	if (startPos > endPos) {
-		for (int i = startPos - 1; i >= endPos-1 ; i--) { //Dans ce cas la boucle est en sens inverse pour pouvoir obtenir les éléments de
-			// startPos à endPos
-			printf("%d ", tab->elt[i]);
+		else {
+			for (int i = startPos - 1; i >= endPos - 1; i--) { //Dans ce cas la boucle est en sens inverse pour pouvoir obtenir les éléments de
+				// startPos à endPos
+				printf("%d ", tab->elt[i]);
+			}
+			return 0;
 		}
-		return 0;
 	}
 }
 
