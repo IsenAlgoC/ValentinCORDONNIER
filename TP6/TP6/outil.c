@@ -326,7 +326,7 @@ int sauvegarder(Repertoire* rep, char nom_fichier[])
 		
 		for (int idx = 0; idx < rep->nb_elts; idx++) {
 			//On copie d'abord ce que l'on veut dans le buffer
-			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s\n", rep->tab[idx].nom, rep->tab[idx].prenom, rep->tab[idx].tel);
+			sprintf_s(buffer, sizeof(Enregistrement) + 1, "%s;%s;%s", rep->tab[idx].nom, rep->tab[idx].prenom, rep->tab[idx].tel);
 			//Et ensuite on l'écrit dans le fichier
 			fputs(buffer, fic_rep);
 		}
