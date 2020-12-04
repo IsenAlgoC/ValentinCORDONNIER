@@ -322,7 +322,7 @@ int sauvegarder(Repertoire* rep, char nom_fichier[])
 	//Si le fichier s'est ouvert correctement alors on passe à la suite
 	if (err == 0 && fic_rep != NULL) {
 		//On construit un pointeur de caractère qui va contenir ce que l'on veut écrire dans le fichier, une ligne à la fois
-		char* buffer[sizeof(Enregistrement) + 1];
+		char buffer[sizeof(Enregistrement) + 1];
 		
 		for (int idx = 0; idx < rep->nb_elts; idx++) {
 			//On copie d'abord ce que l'on veut dans le buffer
