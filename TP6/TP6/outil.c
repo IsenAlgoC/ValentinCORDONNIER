@@ -414,7 +414,7 @@ int charger(Repertoire* rep, char nom_fichier[])
 #else
 #ifdef IMPL_LIST
 														// ajouter code implemention liste
-				
+				//On créé un élément qui va contenir ce que la fonction "lire_champ" va lire
 				SingleLinkedListElem currentElement;
 				if (lire_champ_suivant(buffer, &idx, currentElement.pers.nom, MAX_NOM, SEPARATEUR) == OK)
 				{
@@ -423,6 +423,7 @@ int charger(Repertoire* rep, char nom_fichier[])
 					{
 						idx++;
 						if (lire_champ_suivant(buffer, &idx, currentElement.pers.tel, MAX_TEL, SEPARATEUR) == OK) {
+							//On insère cet élément au répertoire les uns après les autres
 							InsertElementAt(rep->liste, num_rec, currentElement.pers);
 							num_rec++;		/* element à priori correct, on le comptabilise */
 							
